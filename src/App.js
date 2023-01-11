@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Data from "./Data";
+import React, { useEffect, useState } from "react";
+import CentralModal from "./Modal";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
+  const [pokemonData, setPokemonData] = useState([]);
+  const [modalShow, setModalShow] = useState(false);
+  const [indexTracker, setIndexTracker] = useState(0);
+  const getInfo = async () => {
+    const url = `https://api.pokemontcg.io/v2/cards?page=1&pageSize=100`;
+
+    const response = await fetch(url);
+
+    const responseJson = await response.json();
+
+    if (responseJson) {
+      //   setMovieInfo(responseJson)
+      setPokemonData(responseJson);
+    }
+  };
+  useEffect(() => {
+    getInfo();
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Data
+        pokemonData={pokemonData.data}
+        modalShow={modalShow}
+        setModalShow={setModalShow}
+        setIndexTracker={setIndexTracker}
+      />
+      <CentralModal
+        pokemondata={pokemonData.data}
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        indextracker={indexTracker}
+      />
     </div>
   );
 }
